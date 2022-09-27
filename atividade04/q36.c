@@ -5,15 +5,14 @@ int prio(char o) {
 
     switch(o) {
         case '(': return 0;
-        case '+':
-        case '-': return 1;
-        case '*':
-        case '/': return 2;
+        case '|': return 1;
+        case '&': return 2;
+        case '~': return 3;
     }
 
     return -1;
 
-}   
+}
 
 char* posfixa(char* e) {
     static char s[256];
@@ -21,8 +20,8 @@ char* posfixa(char* e) {
     Pilha* P = create_stack();
     for(int i = 0; e[i]; i++) {
         if(e[i] == '(') push('(', P);
-        else if(isdigit(e[i])) s[j++] = e[i];
-        else if(strchr("+-/*", e[i])) {
+        else if(strchr("VF", e[i])) s[j++] = e[i];
+        else if(strchr("~&|", e[i])) {
             while(!stack_is_empty(P) && prio(get_top(P)) >= prio(e[i]))
                 s[j++] = pop(P);
             push(e[i], P);
@@ -39,29 +38,53 @@ char* posfixa(char* e) {
     return s;
 }
 
-int valor(char* e) {
+char not(char c) {
+    if(c == 'V') return 'F';
+    return 'V';
+}
+
+char and(char c, char d) {
+    if(c == 'F') return 'F';
+    if(d == 'F') return 'F';
+    return 'V';
+}
+
+char or(char c, char d) {
+    if(c == 'V') return 'V';
+    if(d == 'V') return 'V';
+    return 'F';
+}
+
+char valor(char* e) {
     Pilha* P = create_stack();
     for(int i = 0; e[i]; i++) {
-        if(isdigit(e[i])) push(e[i]-'0', P);
+        if(strchr("VF", e[i])) push(e[i], P);
         else {
             int y = pop(P);
-            int x = pop(P);
+            int x;
             switch(e[i]) {
-                case '+': push(x+y, P); break;
-                case '-': push(x-y, P); break;
-                case '*': push(x*y, P); break;
-                case '/': push(x/y, P); break;
+                case '~':
+                    push(not(y), P);
+                    break;
+                case '&':
+                    x = pop(P);
+                    push(and(x, y), P);
+                    break;
+                case '|':
+                    x = pop(P);
+                    push(or(x, y), P);
+                    break;
             }
         }
     }
 
-    int z = pop(P);
+    char z = pop(P);
     destroy(P);
     return z;
 }
 
 int main() {
-
+    
     char expression[256];
 
     printf("digite uma expressão numérica: ");
@@ -71,9 +94,9 @@ int main() {
 
     printf("\nexpressão posfixa: %s\n", expressao_posfixa);
 
-    int value = valor(expressao_posfixa);
+    char value = valor(expressao_posfixa);
 
-    printf("\no resultado é: %d\n", value);
+    printf("\no resultado é: %c\n", value);
 
     return 0;
 }
