@@ -31,7 +31,7 @@ void empilha(Item item, Lista *topo) {
 }
 
 int desempilha(Lista *p) {
-    Item item = (*p)->item;
+    int item = (*p)->item;
     *p = (*p)->prox;
 
     return item;
