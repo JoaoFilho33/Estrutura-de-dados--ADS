@@ -42,6 +42,10 @@ class Stack: public stack<T> {
 int main() {
 	Stack<int> fila;
 
+	fila.push(10);
+	fila.push(9);
+	fila.push(8);
+
 	fila.simulaFila(1);
 	fila.simulaFila(2);
 	fila.simulaFila(3);
