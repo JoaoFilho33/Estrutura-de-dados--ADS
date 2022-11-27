@@ -35,5 +35,6 @@ int main(){
    for(i = 0; i <= 5; i++){
       printf("%d ", vetor[i]);
    }
-   printf("\n");   
+   printf("\n");   /*2.Vetor ordenado:
+                     1 3 4 6 7 9*/
 }
